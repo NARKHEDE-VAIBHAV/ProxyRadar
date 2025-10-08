@@ -1,62 +1,106 @@
 
-# EndpointMiner
+# 🛰️ ProxyRadar
 
-Small, practical endpoint and API discovery tool (single-file Python script: `EndpointMiner.py`).
+**ProxyRadar** is a simple Python tool to find **working proxies** and save them in `active_proxies.txt`.
 
-## Features
-- Auto crawl starting URL with polite delays and robots.txt respect
-- Manual mode: scan URL lists or HAR files
-- Proxy capture via selenium-wire or mitmdump
-- Heuristics for sensitive endpoints, JSON responses, and common secret patterns
-- Outputs `findings.json`, `endpoints.txt`, and `secrets.txt` (if any)
+---
 
-## Quick install
-```bash
-python3 -m pip install --user requests beautifulsoup4
-# optional extras:
-python3 -m pip install --user selenium-wire selenium webdriver-manager mitmproxy pandas openpyxl
-```
-
-## Usage examples
-
-Auto crawl:
+## 🚀 How to Run
 
 ```bash
-python3 EndpointMiner.py --mode auto --start https://example.com --depth 2 --output findings.json
+git clone https://github.com/NARKHEDE-VAIBHAV/ProxyRadar
+cd ProxyRadar
+python3 run.py
+````
+
+After running, working proxies will be saved in `active_proxies.txt`.
+
+---
+
+## 📝 What ProxyRadar Does
+
+* Reads candidate proxies from `proxies_list` in `run.py`
+* Tests each proxy for connectivity
+* Saves **working proxies** in `active_proxies.txt`
+* Prints a console summary with counts and stats
+
+---
+
+## 🔧 Supported Proxy Formats
+
+* `http://IP:PORT`
+* `https://IP:PORT`
+* `socks5://IP:PORT`
+* `socks4://IP:PORT`
+
+Example:
+
+```python
+proxies_list = [
+    "http://46.101.92.46:3128",
+    "http://91.103.120.49:443",
+    "socks5://43.163.85.187:1080",
+    "http://119.148.39.241:2727",
+    "http://47.238.223.95:3128",
+]
 ```
 
-Manual from HAR or URL list:
+---
+
+## ⚙️ Requirements
+
+* Python 3.8+
+* Install packages:
 
 ```bash
-python3 EndpointMiner.py --mode manual --capture captured.har --output findings.json
+pip install requests pysocks tqdm
 ```
 
-Proxy capture with browser (selenium-wire):
+---
 
-```bash
-python3 EndpointMiner.py --mode proxy --start https://example.com --duration 30 --capture capture_urls.txt
-```
+## 🔧 Config Options (`run.py`)
 
-Proxy capture with mitmdump:
+* `proxies_list` → list of candidate proxies
+* `TEST_URL` → URL used to test proxies (use your own echo server for best results)
+* `TIMEOUT` → per-proxy timeout (seconds)
+* `MAX_WORKERS` → concurrency level for testing
 
-```bash
-python3 EndpointMiner.py --mode proxy-mitm --mitm-port 8080 --capture capture_urls.txt
-# configure your browser to use 127.0.0.1:8080, browse/login, then press ENTER to stop capture
-```
+---
 
-## Notes and safety
+## 📤 Output
 
-* Only run against targets you own or are authorized to test.
-* The tool may find secrets. Treat discovered secrets as highly sensitive and do not commit them to source control.
-* Consider adding a `--save-secrets` flag before writing secrets to disk.
+* `active_proxies.txt` → validated proxies (one per line)
+* Console summary:
 
-## Output
+  * Total candidates
+  * Number of working proxies
+  * Duration of the run
 
-* `findings.json` - JSON with findings
-* `endpoints.txt` - newline separated endpoints
-* `secrets.txt` - discovered secret matches (if any)
+---
 
-## License
+## 💡 Tips
 
-Add a `LICENSE` file (for example, MIT) if you want to allow reuse.
+* Pre-filter candidates: remove private IPs, duplicates, and malformed entries
+* Use a TCP probe first to drop dead proxies quickly
+* Host your own echo server to avoid public rate-limits
+* Increase `TIMEOUT` if proxies are slow
+* Tune `MAX_WORKERS` based on your system
 
+---
+
+## ⚠️ Legal & Security
+
+* Never send passwords or sensitive info through unknown proxies
+* Do not perform unauthorized scanning, attacks, or spamming
+* Use only for **research, testing, or permissioned scenarios**
+
+---
+
+## 🌟 Optional Enhancements
+
+* Save latency and response codes to CSV
+* Add anonymity checks
+* Retry logic with exponential backoff
+* Geolocation or ASN filtering
+
+---
